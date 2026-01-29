@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +26,9 @@ namespace CNSigra_arthunt
     {
         static List<ArtInventory> inventory;
         static List<ArtSet> Gartlist;
-        
+
+        static int colvo = 0;
+
         static Random rnd = new Random();
         static int charge = 150, scanIndex = 700, scan = 0, score = 0; //si=1000
         static bool buryat = false, elbrus = false;
@@ -45,8 +48,10 @@ namespace CNSigra_arthunt
             try
             {                
                 Gartlist = new List<ArtSet>();
-                //string filePath = "C:/Users/user/source/repos/CNSigra_arthunt/istochnik.txt";
+                //
                 //string[] lines = File.ReadAllLines(filePath);
+                //colvo = lines.Count(i => i.Contains("1"));
+                //Console.WriteLine("KOLVO = " + colvo);
                 foreach (string line in SRSartstorage)
                 {
                     if (string.IsNullOrWhiteSpace(line)) continue;
@@ -68,8 +73,13 @@ namespace CNSigra_arthunt
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(ex.Message.ToString());
-                
+                Console.ForegroundColor = ConsoleColor.White;
             }
+        }
+
+        static void Avait()
+        {
+            var awaiter = Console.ReadKey();
         }
 
         static void GoArthant()
@@ -86,13 +96,17 @@ namespace CNSigra_arthunt
                     {
                         Console.Clear();
                         Console.WriteLine("У вас нет Бурята. Купите его в магазине.");
+                        Avait();
+                        Console.Clear();
                         detectorChoise = 0;
                     }
                     else if(detectorChoise == 3 && elbrus == false)
                     {
                         Console.Clear();
                         Console.WriteLine("У вас нет Эльбруса. Купите его в магазине.");
-                        locationChoise = 0;
+                        Avait();
+                        Console.Clear();
+                        detectorChoise = 0;
                     }
                 } while (detectorChoise < 1 || detectorChoise > 4);
                 
@@ -158,18 +172,27 @@ namespace CNSigra_arthunt
                         {
                             Console.WriteLine("На вас напали ПКшеры, вы всё потеряли.");
                             inventory.Clear();
+                            var awaiter = Console.ReadLine();
                             break;
                         }
 
-                        if (charge < 0)
+                        else if (charge < 0)
                         {
                             Console.WriteLine("Детектор разряжен, идём на вынос.");
+                            var awaiter = Console.ReadLine();
                             break;
                         }
-                        _ = ArthantAnimation();
+                        else
+                        {
+                            _ = ArthantAnimation();
+                        }
+                        
 
                     } while (goChoise != 2);
                     
+                    Console.Clear();
+                    _ = VynosAnimation();
+                    var avaiter = Console.ReadLine();
                 }
             }
             catch
@@ -178,8 +201,9 @@ namespace CNSigra_arthunt
             }
             finally
             {
-                Vynos();
-                _ = VynosAnimation();
+                
+
+
             }
         }
         static void Arthant(int scan)
@@ -277,21 +301,20 @@ namespace CNSigra_arthunt
         }
         private static async Task VynosAnimation()
         {
-            int timer = 20;
+            int timer = 350;
 
             Console.Clear();
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 3; i++)
             {
-                Console.WriteLine("Идём на вынос.");
+                Console.Write("Идём на вынос.");
                 await Task.Delay(TimeSpan.FromMilliseconds(timer));
-                Console.Clear();
-                Console.WriteLine("Идём на вынос..");
+                Console.Write(".");
                 await Task.Delay(TimeSpan.FromMilliseconds(timer));
-                Console.Clear();
-                Console.WriteLine("Идём на вынос...");
+                Console.Write(".");
                 await Task.Delay(TimeSpan.FromMilliseconds(timer));
                 Console.Clear();
             }
+            Vynos();
         }
 
         static void Vynos()
@@ -379,21 +402,23 @@ namespace CNSigra_arthunt
             {
                 Console.Clear();
                 Console.WriteLine("Добро пожаловать в МАГАЗИН! \nАссортимент:");
-                Console.Write("1. Бурят;" ,-8,"75000 руб"); if (buryat == false) { Console.WriteLine("-- ПРОДАНО!!!"); }
-                Console.WriteLine("2. Эльбрус.;", -8,"250000 руб"); if (elbrus == false) { Console.WriteLine("-- ПРОДАНО!!!"); }
-                Console.WriteLine(" 3. Выход. \nЧто брать?");
+                Console.Write("1. Бурят;" ,-8,"75000 руб"); if (buryat == true) { Console.WriteLine("-- ПРОДАНО!!!"); } else { Console.WriteLine(); }
+                Console.Write("2. Эльбрус.;", -8, "250000 руб"); if (elbrus == true) { Console.WriteLine("-- ПРОДАНО!!!"); } else { Console.WriteLine(); }
+                Console.WriteLine(" 3. Выход.");
                 var buychoise = Console.ReadKey();
                 switch (buychoise.Key)
                 {
                     case ConsoleKey.D1:
                     case ConsoleKey.NumPad1:
-                        if (buryat == true && score >= 75000) { buryat = true; Console.WriteLine("Вы уже купили это."); }
-                        else { Console.WriteLine("Поздравляем с приобретением!"); }
+                        if(score < 75000) { Console.WriteLine("Недомтаточно средств"); }
+                        if (buryat == false && score >= 75000) { buryat = true; Console.WriteLine("Вы уже купили это."); }
+                        else { Console.WriteLine("Поздравляем с приобретением Бурята!"); }
                         break;
                     case ConsoleKey.D2:
                     case ConsoleKey.NumPad2:
+                        if (score < 250000) { Console.WriteLine("Недомтаточно средств"); }
                         if (elbrus == true && score >= 250000) { elbrus = true; }
-                        else { Console.WriteLine("Поздравляем с приобретением!"); }
+                        else { Console.WriteLine("Поздравляем с приобретением Эльбруса!"); }
                         break;
                     case ConsoleKey.D3:
                     case ConsoleKey.NumPad3:
@@ -407,9 +432,17 @@ namespace CNSigra_arthunt
 
         static void Main(string[] args) 
         {
+            FillArtSet();
+
+            //string filePath = "C:/Users/user/source/repos/CNSigra_arthunt/istochnik.txt";
+
+            //MethodInfo method = typeof(Program).GetMethod(
+            //"GoArthant",
+            //BindingFlags.Static | BindingFlags.NonPublic);
+            //method.Invoke(null, null);
+
             try
             {
-                FillArtSet();
                 Console.WriteLine("Прошёл выброс. Пора лутать арты.");
                 bool leavegame = false;
                 do
@@ -446,7 +479,7 @@ namespace CNSigra_arthunt
             {
                 Console.WriteLine($"Общий счёт: {score};");
             }
-            var anticlose = Console.ReadLine();
+            Avait();
         }
     }
 }
