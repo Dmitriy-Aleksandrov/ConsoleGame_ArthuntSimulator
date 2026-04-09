@@ -7,7 +7,9 @@ using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Runtime;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace CNSigra_arthunt
 {
@@ -42,6 +44,10 @@ namespace CNSigra_arthunt
          
          
          */
+        
+
+
+
         
         static void FillArtSet()
         {
@@ -184,15 +190,14 @@ namespace CNSigra_arthunt
                         }
                         else
                         {
-                            _ = ArthantAnimation();
+                            ArthantAnimation();
                         }
                         
 
                     } while (goChoise != 2);
                     
                     Console.Clear();
-                    _ = VynosAnimation();
-                    var avaiter = Console.ReadLine();
+                    VynosAnimation();
                 }
             }
             catch
@@ -277,41 +282,43 @@ namespace CNSigra_arthunt
             }
         }
 
-        private static async Task ArthantAnimation()
+        private static void ArthantAnimation() //async Task ArthantAnimation() await Task.Delay(TimeSpan.FromMilliseconds(timer));
         {
             int timer = 20;
             
             for (int i = 0; i < 2; i++)
             {
                 Console.WriteLine("  %%  \n    %%  ");
-                await Task.Delay(TimeSpan.FromMilliseconds(timer));
+                Thread.Sleep(timer);
                 Console.Clear();
                 Console.WriteLine("\n    %%\n  %%  ");
-                await Task.Delay(TimeSpan.FromMilliseconds(timer));
+                Thread.Sleep(timer);
                 Console.Clear();
                 Console.WriteLine("\n%%    \n  %%  ");
-                await Task.Delay(TimeSpan.FromMilliseconds(timer));
+                Thread.Sleep(timer);
                 Console.Clear();
                 Console.WriteLine("  %%  \n%%    \n");
-                await Task.Delay(TimeSpan.FromMilliseconds(timer));
+                Thread.Sleep(timer);
                 Console.Clear();
             }
             Arthant(scan);
 
         }
-        private static async Task VynosAnimation()
+        private static void VynosAnimation()
         {
             int timer = 350;
 
             Console.Clear();
             for (int i = 0; i < 3; i++)
             {
-                Console.Write("Идём на вынос.");
-                await Task.Delay(TimeSpan.FromMilliseconds(timer));
+                Console.Write("Идём на вынос");
+                Thread.Sleep(timer);
                 Console.Write(".");
-                await Task.Delay(TimeSpan.FromMilliseconds(timer));
+                Thread.Sleep(timer);
                 Console.Write(".");
-                await Task.Delay(TimeSpan.FromMilliseconds(timer));
+                Thread.Sleep(timer);
+                Console.Write(".");
+                Thread.Sleep(timer);
                 Console.Clear();
             }
             Vynos();
@@ -389,8 +396,9 @@ namespace CNSigra_arthunt
                 score += vynossum;
 
                 Console.Write($"Общая сумма выноса: {vynossum}");
-                
-                var wait = Console.ReadLine();
+
+                Avait();
+                Console.Clear();
 
             }
         }
@@ -402,23 +410,27 @@ namespace CNSigra_arthunt
             {
                 Console.Clear();
                 Console.WriteLine("Добро пожаловать в МАГАЗИН! \nАссортимент:");
-                Console.Write("1. Бурят;" ,-8,"75000 руб"); if (buryat == true) { Console.WriteLine("-- ПРОДАНО!!!"); } else { Console.WriteLine(); }
-                Console.Write("2. Эльбрус.;", -8, "250000 руб"); if (elbrus == true) { Console.WriteLine("-- ПРОДАНО!!!"); } else { Console.WriteLine(); }
+                Console.Write("1. Бурят;" ,-8,"75000 руб"); 
+                if (buryat == true) { Console.WriteLine("-- ПРОДАНО!!!"); } else { Console.WriteLine(); }
+                Console.Write("2. Эльбрус.;", -8, "250000 руб"); 
+                if (elbrus == true) { Console.WriteLine("-- ПРОДАНО!!!"); } else { Console.WriteLine(); }
                 Console.WriteLine(" 3. Выход.");
                 var buychoise = Console.ReadKey();
                 switch (buychoise.Key)
                 {
                     case ConsoleKey.D1:
                     case ConsoleKey.NumPad1:
-                        if(score < 75000) { Console.WriteLine("Недомтаточно средств"); }
-                        if (buryat == false && score >= 75000) { buryat = true; Console.WriteLine("Вы уже купили это."); }
-                        else { Console.WriteLine("Поздравляем с приобретением Бурята!"); }
+                        if(score < 75000) { Console.WriteLine("Недостаточно средств"); }
+                        else if (buryat == true) { Console.WriteLine("Вы уже купили это."); }
+                        else { score -= 75000; Console.WriteLine("Поздравляем с приобретением Бурята!"); }
+                        Avait();
                         break;
                     case ConsoleKey.D2:
                     case ConsoleKey.NumPad2:
-                        if (score < 250000) { Console.WriteLine("Недомтаточно средств"); }
-                        if (elbrus == true && score >= 250000) { elbrus = true; }
-                        else { Console.WriteLine("Поздравляем с приобретением Эльбруса!"); }
+                        if (score < 250000) { Console.WriteLine("Недостаточно средств"); }
+                        else if (elbrus == true) { Console.WriteLine("Вы уже купили это."); }
+                        else { score -= 250000; elbrus = true; Console.WriteLine("Поздравляем с приобретением Эльбруса!"); }
+                        Avait();
                         break;
                     case ConsoleKey.D3:
                     case ConsoleKey.NumPad3:
@@ -433,6 +445,7 @@ namespace CNSigra_arthunt
         static void Main(string[] args) 
         {
             FillArtSet();
+            Console.ForegroundColor = ConsoleColor.White;
 
             //string filePath = "C:/Users/user/source/repos/CNSigra_arthunt/istochnik.txt";
 

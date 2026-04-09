@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решен
 	ProjectSection(SolutionItems) = preProject
 		bin\Debug\CNSigra_arthunt.exe = bin\Debug\CNSigra_arthunt.exe
 		istochnik.txt = istochnik.txt
+		документация ultimate arthunt.docx = документация ultimate arthunt.docx
 	EndProjectSection
 EndProject
 Global
