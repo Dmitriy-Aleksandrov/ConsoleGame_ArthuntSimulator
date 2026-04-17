@@ -32,7 +32,7 @@ namespace CNSigra_arthunt
         static int colvo = 0;
 
         static Random rnd = new Random();
-        static int charge = 150, scanIndex = 700, scan = 0, score = 0; //si=1000
+        static int charge = 150, scanIndex = 700, scan = 0, score = 50; //si=1000
         static bool buryat = false, elbrus = false;
 
         static string[] SRSartstorage = new string[] { "0 Вехотка 1,18","1 Осколок 1,93","2 Стальной_ежик 1,77","3 Кисель 1.2",
@@ -45,16 +45,11 @@ namespace CNSigra_arthunt
          
          */
         
-
-
-
-        
         static void FillArtSet()
         {
             try
             {                
                 Gartlist = new List<ArtSet>();
-                //
                 //string[] lines = File.ReadAllLines(filePath);
                 //colvo = lines.Count(i => i.Contains("1"));
                 //Console.WriteLine("KOLVO = " + colvo);
@@ -118,6 +113,7 @@ namespace CNSigra_arthunt
                 
                 if(detectorChoise == 4)
                 {
+                    Console.Clear();
                     return;
                 }
 
@@ -195,7 +191,8 @@ namespace CNSigra_arthunt
                         
 
                     } while (goChoise != 2);
-                    
+                    scanIndex = 1000;
+                    charge = 150;
                     Console.Clear();
                     VynosAnimation();
                 }
@@ -397,10 +394,9 @@ namespace CNSigra_arthunt
 
                 Console.Write($"Общая сумма выноса: {vynossum}");
 
-                Avait();
-                Console.Clear();
-
             }
+            Avait();
+            Console.Clear();
         }
 
         static void GoShop()
@@ -409,26 +405,27 @@ namespace CNSigra_arthunt
             do
             {
                 Console.Clear();
-                Console.WriteLine("Добро пожаловать в МАГАЗИН! \nАссортимент:");
-                Console.Write("1. Бурят;" ,-8,"75000 руб"); 
+                Console.WriteLine($"Добро пожаловать в МАГАЗИН!\n На счету {score} рублей. \nАссортимент:");
+                Console.Write("1. Бурят   - 75000 руб"); 
                 if (buryat == true) { Console.WriteLine("-- ПРОДАНО!!!"); } else { Console.WriteLine(); }
-                Console.Write("2. Эльбрус.;", -8, "250000 руб"); 
+                Console.Write("2. Эльбрус - 250000 руб"); 
                 if (elbrus == true) { Console.WriteLine("-- ПРОДАНО!!!"); } else { Console.WriteLine(); }
                 Console.WriteLine(" 3. Выход.");
                 var buychoise = Console.ReadKey();
+                Console.Clear();
                 switch (buychoise.Key)
                 {
                     case ConsoleKey.D1:
                     case ConsoleKey.NumPad1:
-                        if(score < 75000) { Console.WriteLine("Недостаточно средств"); }
-                        else if (buryat == true) { Console.WriteLine("Вы уже купили это."); }
-                        else { score -= 75000; Console.WriteLine("Поздравляем с приобретением Бурята!"); }
+                        if (buryat == true) { Console.WriteLine("Вы уже купили это."); }
+                        else if (score < 75000) { Console.WriteLine("Недостаточно средств"); }
+                        else { score -= 75000; buryat = true; Console.WriteLine("\nПоздравляем с приобретением Бурята!"); }
                         Avait();
                         break;
                     case ConsoleKey.D2:
                     case ConsoleKey.NumPad2:
-                        if (score < 250000) { Console.WriteLine("Недостаточно средств"); }
-                        else if (elbrus == true) { Console.WriteLine("Вы уже купили это."); }
+                        if (elbrus == true) { Console.WriteLine("Вы уже купили это."); }
+                        else if (score < 250000) { Console.WriteLine("Недостаточно средств"); }
                         else { score -= 250000; elbrus = true; Console.WriteLine("Поздравляем с приобретением Эльбруса!"); }
                         Avait();
                         break;
@@ -460,7 +457,7 @@ namespace CNSigra_arthunt
                 bool leavegame = false;
                 do
                 {
-                    
+                    Console.WriteLine($"На счету {score} рублей.");
                     Console.WriteLine("Куда отправимся: \n1. Лутать арты. \n2. В магазин.\n 3. Завершить игру. ");
                     var gochoise = Console.ReadKey();
                     switch (gochoise.Key)
